@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ray.dao.StudentDao">
+
+    <!-- 在resultMap节点中，id表示哪个字段代表这主键，result节点定义了普通的映射关系，
+         这里的property表示JavaBean中的属性名称，column表示数据库中的字段名称-->
+    <resultMap id="BaseResultMap" type="com.ray.entity.Student">
+        <id property="id" column="id"/>
+        <result property="stu_id" column="stu_id"/>
+        <result property="stu_name" column="stu_name"/>
+        <result property="stu_age" column="stu_age"/>
+        <result property="stu_major" column="stu_major"/>
+    </resultMap>
+
+    <!-- <sql>用来封装SQL语句 -->
+    <sql id="Base_Column_List">
+        id,stu_id,stu_name,stu_age,stu_major
+    </sql>
+
+    <!-- 查询所有学生信息 resultMap则是对外部ResultMap的引用-->
+    <select id="selectByStudent" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        student
+    </select>
+
+    <!-- 根据编号查询学生信息 -->
+    <select id="selectByKey" resultMap="BaseResultMap" parameterType="com.ray.entity.Student">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        student
+        WHERE
+        id = #{id}
+    </select>
+
+    <!-- 根据学号查询学生信息 -->
+    <select id="selectByStuId" resultMap="BaseResultMap" parameterType="com.ray.entity.Student">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        student
+        WHERE
+        stu_id = #{stu_id}
+    </select>
+
+    <!-- 新增学生信息 parameterType为输入参数 -->
+    <!-- （仅对 insert 和 update 有用）这会令 MyBatis 使用 JDBC 的 getGeneratedKeys 方法来取出由数据库内部生成的主键（比如：像 MySQL 和 SQL Server 这样的关系数据库管理系统的自动递增字段） -->
+    <insert id="insert" parameterType="com.ray.entity.Student" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO
+        student
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="stu_id != null">
+                stu_id,
+            </if>
+            <if test="stu_name != null">
+                stu_name,
+            </if>
+            <if test="stu_age != null">
+                stu_age,
+            </if>
+            <if test="stu_major != null">
+                stu_major,
+            </if>
+        </trim>
+        <trim prefix="VALUES(" suffix=")" suffixOverrides=",">
+            <if test="stu_id != null">
+                #{stu_id},
+            </if>
+            <if test="stu_name != null">
+                #{stu_name},
+            </if>
+            <if test="stu_age != null">
+                #{stu_age},
+            </if>
+            <if test="stu_major != null">
+                #{stu_major},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 修改学生信息 parameterType为输入参数 -->
+    <update id="update" parameterType="com.ray.entity.Student">
+        UPDATE
+        student
+        <set>
+            <if test="stu_id != null">
+                stu_id = #{stu_id},
+            </if>
+            <if test="stu_name != null">
+                stu_name = #{stu_name},
+            </if>
+            <if test="stu_age != null">
+                stu_age = #{stu_age},
+            </if>
+            <if test="stu_major != null">
+                stu_major = #{stu_major},
+            </if>
+        </set>
+        WHERE
+        id = #{id}
+    </update>
+
+    <!-- 删除学生信息 parameterType为输入参数 -->
+    <delete id="delete" parameterType="int">
+        DELETE FROM
+        student
+        WHERE
+        id = #{id}
+    </delete>
+</mapper>
